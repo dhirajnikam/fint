@@ -4,7 +4,7 @@ import { X, AlertTriangle, DollarSign, Percent, FileText } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
 
 const AddDebtModal = ({ isOpen, onClose }) => {
-  const { addDebt } = useData();
+  const { addDebt, showNotification } = useData();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -12,26 +12,31 @@ const AddDebtModal = ({ isOpen, onClose }) => {
     interestRate: '',
     minPayment: ''
   });
+  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Custom validation
+    const newErrors = {};
     if (!formData.name.trim()) {
-      alert('Please enter a debt name');
-      return;
+      newErrors.name = 'Please enter a debt name';
     }
-    
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
-      alert('Please enter a valid amount');
-      return;
+      newErrors.amount = 'Please enter a valid amount';
     }
-    
     if (!formData.interestRate || parseFloat(formData.interestRate) < 0) {
-      alert('Please enter a valid interest rate');
+      newErrors.interestRate = 'Please enter a valid interest rate';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      showNotification('Please fix the errors before submitting.', 'warning');
       return;
     }
+
+    setErrors({});
     
     setIsLoading(true);
 
@@ -58,6 +63,7 @@ const AddDebtModal = ({ isOpen, onClose }) => {
       interestRate: '',
       minPayment: ''
     });
+    setErrors({});
     onClose();
   };
 
@@ -66,6 +72,10 @@ const AddDebtModal = ({ isOpen, onClose }) => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
     }));
   };
 
@@ -113,16 +123,19 @@ const AddDebtModal = ({ isOpen, onClose }) => {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <AlertTriangle className="h-5 w-5 text-gray-400" />
                       </div>
-                                             <input
-                         type="text"
-                         id="name"
-                         name="name"
-                         value={formData.name}
-                         onChange={handleInputChange}
-                         className="input-field pl-10"
-                         placeholder="e.g., Credit Card, Student Loan"
-                       />
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="input-field pl-10"
+                        placeholder="e.g., Credit Card, Student Loan"
+                      />
                     </div>
+                    {errors.name && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.name}</p>
+                    )}
                   </div>
 
                   {/* Description */}
@@ -155,18 +168,21 @@ const AddDebtModal = ({ isOpen, onClose }) => {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <DollarSign className="h-5 w-5 text-gray-400" />
                       </div>
-                                             <input
-                         type="number"
-                         id="amount"
-                         name="amount"
-                         step="0.01"
-                         min="0"
-                         value={formData.amount}
-                         onChange={handleInputChange}
-                         className="input-field pl-10"
-                         placeholder="0.00"
-                       />
+                      <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        step="0.01"
+                        min="0"
+                        value={formData.amount}
+                        onChange={handleInputChange}
+                        className="input-field pl-10"
+                        placeholder="0.00"
+                      />
                     </div>
+                    {errors.amount && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.amount}</p>
+                    )}
                   </div>
 
                   {/* Interest Rate */}
@@ -178,19 +194,22 @@ const AddDebtModal = ({ isOpen, onClose }) => {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Percent className="h-5 w-5 text-gray-400" />
                       </div>
-                                             <input
-                         type="number"
-                         id="interestRate"
-                         name="interestRate"
-                         step="0.01"
-                         min="0"
-                         max="100"
-                         value={formData.interestRate}
-                         onChange={handleInputChange}
-                         className="input-field pl-10"
-                         placeholder="0.00"
-                       />
+                      <input
+                        type="number"
+                        id="interestRate"
+                        name="interestRate"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        value={formData.interestRate}
+                        onChange={handleInputChange}
+                        className="input-field pl-10"
+                        placeholder="0.00"
+                      />
                     </div>
+                    {errors.interestRate && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.interestRate}</p>
+                    )}
                   </div>
 
                   {/* Minimum Payment */}

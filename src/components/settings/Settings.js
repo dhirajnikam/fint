@@ -20,10 +20,12 @@ const Settings = () => {
     exportData,
     clearAllData,
     showNotification,
+
     analytics,
     addTransaction,
     addSavingsGoal,
     addDebt
+
   } = useData();
   const { user, logout } = useAuth();
   const [isExporting, setIsExporting] = useState(false);
@@ -98,9 +100,9 @@ const Settings = () => {
 
   const getDataStats = () => {
     return {
-      transactions: analytics.recentActivity.filter(item => item.type).length,
-      savings: analytics.recentActivity.filter(item => item.targetAmount).length,
-      debts: analytics.recentActivity.filter(item => item.interestRate !== undefined).length,
+      transactions: transactions.length,
+      savings: savings.length,
+      debts: debts.length,
       totalSize: '~2.5 MB' // Placeholder
     };
   };

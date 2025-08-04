@@ -26,6 +26,8 @@ const Transactions = () => {
     'Salary', 'Freelance', 'Investment', 'Other'
   ];
 
+  const getDate = (item) => item.createdAt?.toDate ? item.createdAt.toDate() : new Date(item.createdAt);
+
   const filteredTransactions = transactions
     .filter(transaction => {
       const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -36,7 +38,9 @@ const Transactions = () => {
     .sort((a, b) => {
       switch (sortBy) {
         case 'date':
-          return new Date(b.createdAt) - new Date(a.createdAt);
+
+          return getDate(b) - getDate(a);
+
         case 'amount':
           return parseFloat(b.amount) - parseFloat(a.amount);
         case 'category':
@@ -56,12 +60,15 @@ const Transactions = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (date) => {
+
+    const d = date?.toDate ? date.toDate() : new Date(date);
+    return d.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
+
   };
 
   if (loading) {
