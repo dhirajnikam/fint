@@ -4,27 +4,33 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 const ExpenseChart = ({ transactions }) => {
   // Group transactions by month
   const monthlyData = transactions.reduce((acc, transaction) => {
-    const date = new Date(transaction.createdAt);
-    const monthYear = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    
-    if (!acc[monthYear]) {
-      acc[monthYear] = { month: monthYear, income: 0, expenses: 0 };
+    const date = transaction.createdAt;
+    if (!date) return acc;
+    const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+
+    if (!acc[monthKey]) {
+      acc[monthKey] = {
+        month: new Date(date.getFullYear(), date.getMonth(), 1),
+        income: 0,
+        expenses: 0
+      };
     }
-    
+
     if (transaction.type === 'income') {
-      acc[monthYear].income += parseFloat(transaction.amount);
+      acc[monthKey].income += parseFloat(transaction.amount);
     } else {
-      acc[monthYear].expenses += parseFloat(transaction.amount);
+      acc[monthKey].expenses += parseFloat(transaction.amount);
     }
-    
+
     return acc;
   }, {});
 
-  const chartData = Object.values(monthlyData).sort((a, b) => {
-    const dateA = new Date(a.month);
-    const dateB = new Date(b.month);
-    return dateA - dateB;
-  });
+  const chartData = Object.values(monthlyData)
+    .sort((a, b) => a.month - b.month)
+    .map(item => ({
+      ...item,
+      month: item.month.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    }));
 
   if (chartData.length === 0) {
     return (

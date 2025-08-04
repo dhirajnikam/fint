@@ -36,7 +36,7 @@ const Transactions = () => {
     .sort((a, b) => {
       switch (sortBy) {
         case 'date':
-          return new Date(b.createdAt) - new Date(a.createdAt);
+          return (b.createdAt || 0) - (a.createdAt || 0);
         case 'amount':
           return parseFloat(b.amount) - parseFloat(a.amount);
         case 'category':
@@ -56,12 +56,14 @@ const Transactions = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+  const formatDate = (date) => {
+    return date
+      ? date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })
+      : '';
   };
 
   if (loading) {
