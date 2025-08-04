@@ -56,7 +56,6 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
         ...formData,
         amount: parseFloat(formData.amount),
         tags,
-        createdAt: new Date(formData.date).toISOString(),
         receiptUrl: receiptFile ? await uploadReceipt(receiptFile) : null
       };
 
