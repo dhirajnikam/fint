@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase/config';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { DataProvider } from './contexts/DataContext';
 import Login from './components/auth/Login';
@@ -14,103 +12,99 @@ import Settings from './components/settings/Settings';
 import Layout from './components/layout/Layout';
 import LoadingSpinner from './components/common/LoadingSpinner';
 
-function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+function AppRoutes() {
+  const { user, loading } = useAuth();
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
   return (
+    <DataProvider>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <Routes>
+          <Route
+            path="/login"
+            element={user ? <Navigate to="/dashboard" /> : <Login />}
+          />
+          <Route
+            path="/"
+            element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/dashboard"
+            element={
+              user ? (
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              user ? (
+                <Layout>
+                  <Transactions />
+                </Layout>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/savings"
+            element={
+              user ? (
+                <Layout>
+                  <Savings />
+                </Layout>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/debts"
+            element={
+              user ? (
+                <Layout>
+                  <Debts />
+                </Layout>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              user ? (
+                <Layout>
+                  <Settings />
+                </Layout>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+        </Routes>
+      </div>
+    </DataProvider>
+  );
+}
+
+function App() {
+  return (
     <ThemeProvider>
       <AuthProvider>
-        <DataProvider>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <Routes>
-              <Route 
-                path="/login" 
-                element={user ? <Navigate to="/dashboard" /> : <Login />} 
-              />
-              <Route 
-                path="/" 
-                element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} 
-              />
-              <Route 
-                path="/dashboard" 
-                element={
-                  user ? (
-                    <Layout>
-                      <Dashboard />
-                    </Layout>
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                } 
-              />
-              <Route 
-                path="/transactions" 
-                element={
-                  user ? (
-                    <Layout>
-                      <Transactions />
-                    </Layout>
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                } 
-              />
-              <Route 
-                path="/savings" 
-                element={
-                  user ? (
-                    <Layout>
-                      <Savings />
-                    </Layout>
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                } 
-              />
-              <Route 
-                path="/debts" 
-                element={
-                  user ? (
-                    <Layout>
-                      <Debts />
-                    </Layout>
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                } 
-              />
-              <Route 
-                path="/settings" 
-                element={
-                  user ? (
-                    <Layout>
-                      <Settings />
-                    </Layout>
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                } 
-              />
-            </Routes>
-          </div>
-        </DataProvider>
+        <AppRoutes />
       </AuthProvider>
     </ThemeProvider>
   );
 }
 
-export default App; 
+export default App;
