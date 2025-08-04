@@ -20,9 +20,12 @@ const Settings = () => {
     exportData,
     clearAllData,
     showNotification,
-    transactions,
-    savings,
-    debts
+
+    analytics,
+    addTransaction,
+    addSavingsGoal,
+    addDebt
+
   } = useData();
   const { user, logout } = useAuth();
   const [isExporting, setIsExporting] = useState(false);
@@ -54,19 +57,45 @@ const Settings = () => {
 
   const handleImport = (event) => {
     const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const data = JSON.parse(e.target.result);
-          showNotification('Data import functionality coming soon!', 'info');
-          // TODO: Implement data import functionality
-        } catch (error) {
-          showNotification('Invalid file format. Please use a valid JSON file.', 'error');
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+
+        if (
+          !data ||
+          typeof data !== 'object' ||
+          !Array.isArray(data.transactions) ||
+          !Array.isArray(data.savings) ||
+          !Array.isArray(data.debts)
+        ) {
+          throw new Error('Invalid data structure');
         }
-      };
-      reader.readAsText(file);
-    }
+
+        for (const transaction of data.transactions) {
+          const { id, userId, createdAt, updatedAt, ...transactionData } = transaction;
+          await addTransaction(transactionData);
+        }
+
+        for (const goal of data.savings) {
+          const { id, userId, createdAt, updatedAt, ...goalData } = goal;
+          await addSavingsGoal(goalData);
+        }
+
+        for (const debt of data.debts) {
+          const { id, userId, createdAt, updatedAt, ...debtData } = debt;
+          await addDebt(debtData);
+        }
+
+        showNotification('Data imported successfully!', 'success');
+      } catch (error) {
+        console.error('Import error:', error);
+        showNotification('Error importing data. Please check the file and try again.', 'error');
+      }
+    };
+    reader.readAsText(file);
   };
 
   const getDataStats = () => {
