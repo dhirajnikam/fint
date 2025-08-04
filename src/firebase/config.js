@@ -4,12 +4,12 @@ import { getFirestore } from 'firebase/firestore';
 
 // Your Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBcsJV6bRt1NVtHncmnnBZCpy0JclC1hd0",
-  authDomain: "trackwise-h6zk3.firebaseapp.com",
-  projectId: "trackwise-h6zk3",
-  storageBucket: "trackwise-h6zk3.firebasestorage.app",
-  messagingSenderId: "188468311111",
-  appId: "1:188468311111:web:e0f520b25b6872b6992d62"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
 // Initialize Firebase
