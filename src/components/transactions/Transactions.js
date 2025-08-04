@@ -38,7 +38,9 @@ const Transactions = () => {
     .sort((a, b) => {
       switch (sortBy) {
         case 'date':
+
           return getDate(b) - getDate(a);
+
         case 'amount':
           return parseFloat(b.amount) - parseFloat(a.amount);
         case 'category':
@@ -59,12 +61,14 @@ const Transactions = () => {
   };
 
   const formatDate = (date) => {
+
     const d = date?.toDate ? date.toDate() : new Date(date);
     return d.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
+
   };
 
   if (loading) {

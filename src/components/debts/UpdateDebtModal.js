@@ -4,7 +4,7 @@ import { X, AlertTriangle, DollarSign, Percent, FileText } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
 
 const UpdateDebtModal = ({ isOpen, onClose, debt }) => {
-  const { updateDebt } = useData();
+  const { updateDebt, showNotification } = useData();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -13,6 +13,7 @@ const UpdateDebtModal = ({ isOpen, onClose, debt }) => {
     minPayment: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (debt) {
@@ -28,6 +29,25 @@ const UpdateDebtModal = ({ isOpen, onClose, debt }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const newErrors = {};
+    if (!formData.name.trim()) {
+      newErrors.name = 'Please enter a debt name';
+    }
+    if (!formData.amount || parseFloat(formData.amount) <= 0) {
+      newErrors.amount = 'Please enter a valid amount';
+    }
+    if (!formData.interestRate || parseFloat(formData.interestRate) < 0) {
+      newErrors.interestRate = 'Please enter a valid interest rate';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      showNotification('Please fix the errors before submitting.', 'warning');
+      return;
+    }
+
+    setErrors({});
     setIsLoading(true);
 
     try {
@@ -47,6 +67,7 @@ const UpdateDebtModal = ({ isOpen, onClose, debt }) => {
   };
 
   const handleClose = () => {
+    setErrors({});
     onClose();
   };
 
@@ -55,6 +76,10 @@ const UpdateDebtModal = ({ isOpen, onClose, debt }) => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
     }));
   };
 
@@ -114,6 +139,9 @@ const UpdateDebtModal = ({ isOpen, onClose, debt }) => {
                         placeholder="e.g., Credit Card, Student Loan"
                       />
                     </div>
+                    {errors.name && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.name}</p>
+                    )}
                   </div>
 
                   {/* Description */}
@@ -159,6 +187,9 @@ const UpdateDebtModal = ({ isOpen, onClose, debt }) => {
                         placeholder="0.00"
                       />
                     </div>
+                    {errors.amount && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.amount}</p>
+                    )}
                   </div>
 
                   {/* Interest Rate */}
@@ -184,6 +215,9 @@ const UpdateDebtModal = ({ isOpen, onClose, debt }) => {
                         placeholder="0.00"
                       />
                     </div>
+                    {errors.interestRate && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.interestRate}</p>
+                    )}
                   </div>
 
                   {/* Minimum Payment */}
