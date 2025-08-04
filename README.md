@@ -78,15 +78,17 @@ A comprehensive personal finance management application built with React, Fireba
 5. Add your config values to the `.env` file
 
 ### Environment Variables
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory with your Firebase configuration:
 ```env
-REACT_APP_FIREBASE_API_KEY=your_api_key
-REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
-REACT_APP_FIREBASE_PROJECT_ID=your_project_id
-REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-REACT_APP_FIREBASE_APP_ID=your_app_id
+REACT_APP_FIREBASE_API_KEY=AIzaSyBcsJV6bRt1NVtHncmnnBZCpy0JclC1hd0
+REACT_APP_FIREBASE_AUTH_DOMAIN=trackwise-h6zk3.firebaseapp.com
+REACT_APP_FIREBASE_PROJECT_ID=trackwise-h6zk3
+REACT_APP_FIREBASE_STORAGE_BUCKET=trackwise-h6zk3.firebasestorage.app
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=188468311111
+REACT_APP_FIREBASE_APP_ID=1:188468311111:web:e0f520b25b6872b6992d62
 ```
+
+**Note**: The app will work without the `.env` file as it includes fallback values, but it's recommended to create the `.env` file for better security and flexibility.
 
 ## 📱 Features Overview
 
