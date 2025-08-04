@@ -4,7 +4,7 @@ import { X, DollarSign, Calendar, Tag, MapPin, FileText, Upload } from 'lucide-r
 import { useData } from '../../contexts/DataContext';
 
 const AddTransactionModal = ({ isOpen, onClose, categories }) => {
-  const { addTransaction } = useData();
+  const { addTransaction, showNotification } = useData();
   const [formData, setFormData] = useState({
     type: 'expense',
     amount: '',
@@ -18,30 +18,33 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [receiptFile, setReceiptFile] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Custom validation
+    const newErrors = {};
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
-      alert('Please enter a valid amount');
-      return;
+      newErrors.amount = 'Please enter a valid amount';
     }
-    
     if (!formData.description.trim()) {
-      alert('Please enter a description');
-      return;
+      newErrors.description = 'Please enter a description';
     }
-    
     if (!formData.category) {
-      alert('Please select a category');
-      return;
+      newErrors.category = 'Please select a category';
     }
-    
     if (!formData.date) {
-      alert('Please select a date');
+      newErrors.date = 'Please select a date';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      showNotification('Please fix the errors before submitting.', 'warning');
       return;
     }
+
+    setErrors({});
     
     setIsLoading(true);
 
@@ -92,6 +95,7 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
       receiptUrl: null
     });
     setReceiptFile(null);
+    setErrors({});
     onClose();
   };
 
@@ -100,6 +104,10 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
     }));
   };
 
@@ -213,7 +221,7 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <DollarSign className="h-5 w-5 text-gray-400" />
                       </div>
-                                                                     <input
+                        <input
                           type="number"
                           id="amount"
                           name="amount"
@@ -228,6 +236,9 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
                           autoComplete="off"
                         />
                     </div>
+                    {errors.amount && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.amount}</p>
+                    )}
                   </div>
 
                   {/* Description */}
@@ -235,15 +246,18 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
                     <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Description
                     </label>
-                                         <input
-                       type="text"
-                       id="description"
-                       name="description"
-                       value={formData.description}
-                       onChange={handleInputChange}
-                       className="input-field"
-                       placeholder="Enter description..."
-                     />
+                    <input
+                      type="text"
+                      id="description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="Enter description..."
+                    />
+                    {errors.description && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.description}</p>
+                    )}
                   </div>
 
                   {/* Category */}
@@ -251,13 +265,13 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
                     <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Category
                     </label>
-                                         <select
-                       id="category"
-                       name="category"
-                       value={formData.category}
-                       onChange={handleInputChange}
-                       className="input-field"
-                     >
+                    <select
+                      id="category"
+                      name="category"
+                      value={formData.category}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    >
                       <option value="">Select a category</option>
                       {categories.map((category) => (
                         <option key={category} value={category}>
@@ -265,6 +279,9 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
                         </option>
                       ))}
                     </select>
+                    {errors.category && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.category}</p>
+                    )}
                   </div>
 
                   {/* Tags */}
@@ -318,7 +335,7 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Calendar className="h-5 w-5 text-gray-400" />
                       </div>
-                                             <input
+                        <input
                          type="date"
                          id="date"
                          name="date"
@@ -327,6 +344,9 @@ const AddTransactionModal = ({ isOpen, onClose, categories }) => {
                          className="input-field pl-10"
                        />
                     </div>
+                    {errors.date && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.date}</p>
+                    )}
                   </div>
 
                   {/* Notes */}

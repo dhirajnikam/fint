@@ -4,7 +4,7 @@ import { X, Target, DollarSign, FileText } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
 
 const UpdateSavingsModal = ({ isOpen, onClose, goal }) => {
-  const { updateSavingsGoal } = useData();
+  const { updateSavingsGoal, showNotification } = useData();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -12,6 +12,7 @@ const UpdateSavingsModal = ({ isOpen, onClose, goal }) => {
     currentAmount: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (goal) {
@@ -26,6 +27,22 @@ const UpdateSavingsModal = ({ isOpen, onClose, goal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const newErrors = {};
+    if (!formData.name.trim()) {
+      newErrors.name = 'Please enter a goal name';
+    }
+    if (!formData.targetAmount || parseFloat(formData.targetAmount) <= 0) {
+      newErrors.targetAmount = 'Please enter a valid target amount';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      showNotification('Please fix the errors before submitting.', 'warning');
+      return;
+    }
+
+    setErrors({});
     setIsLoading(true);
 
     try {
@@ -44,6 +61,7 @@ const UpdateSavingsModal = ({ isOpen, onClose, goal }) => {
   };
 
   const handleClose = () => {
+    setErrors({});
     onClose();
   };
 
@@ -52,6 +70,10 @@ const UpdateSavingsModal = ({ isOpen, onClose, goal }) => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
     }));
   };
 
@@ -111,6 +133,9 @@ const UpdateSavingsModal = ({ isOpen, onClose, goal }) => {
                         placeholder="e.g., Emergency Fund"
                       />
                     </div>
+                    {errors.name && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.name}</p>
+                    )}
                   </div>
 
                   {/* Description */}
@@ -156,6 +181,9 @@ const UpdateSavingsModal = ({ isOpen, onClose, goal }) => {
                         placeholder="0.00"
                       />
                     </div>
+                    {errors.targetAmount && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.targetAmount}</p>
+                    )}
                   </div>
 
                   {/* Current Amount */}

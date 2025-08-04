@@ -4,28 +4,35 @@ import { X, Target, DollarSign, FileText } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
 
 const AddSavingsModal = ({ isOpen, onClose }) => {
-  const { addSavingsGoal } = useData();
+  const { addSavingsGoal, showNotification } = useData();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     targetAmount: '',
     currentAmount: '0'
   });
+  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Custom validation
+    const newErrors = {};
     if (!formData.name.trim()) {
-      alert('Please enter a goal name');
-      return;
+      newErrors.name = 'Please enter a goal name';
     }
-    
     if (!formData.targetAmount || parseFloat(formData.targetAmount) <= 0) {
-      alert('Please enter a valid target amount');
+      newErrors.targetAmount = 'Please enter a valid target amount';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      showNotification('Please fix the errors before submitting.', 'warning');
       return;
     }
+
+    setErrors({});
     
     setIsLoading(true);
 
@@ -50,6 +57,7 @@ const AddSavingsModal = ({ isOpen, onClose }) => {
       targetAmount: '',
       currentAmount: '0'
     });
+    setErrors({});
     onClose();
   };
 
@@ -58,6 +66,10 @@ const AddSavingsModal = ({ isOpen, onClose }) => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
     }));
   };
 
@@ -105,16 +117,19 @@ const AddSavingsModal = ({ isOpen, onClose }) => {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Target className="h-5 w-5 text-gray-400" />
                       </div>
-                                             <input
-                         type="text"
-                         id="name"
-                         name="name"
-                         value={formData.name}
-                         onChange={handleInputChange}
-                         className="input-field pl-10"
-                         placeholder="e.g., Emergency Fund"
-                       />
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="input-field pl-10"
+                        placeholder="e.g., Emergency Fund"
+                      />
                     </div>
+                    {errors.name && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.name}</p>
+                    )}
                   </div>
 
                   {/* Description */}
@@ -147,18 +162,21 @@ const AddSavingsModal = ({ isOpen, onClose }) => {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <DollarSign className="h-5 w-5 text-gray-400" />
                       </div>
-                                             <input
-                         type="number"
-                         id="targetAmount"
-                         name="targetAmount"
-                         step="0.01"
-                         min="0"
-                         value={formData.targetAmount}
-                         onChange={handleInputChange}
-                         className="input-field pl-10"
-                         placeholder="0.00"
-                       />
+                      <input
+                        type="number"
+                        id="targetAmount"
+                        name="targetAmount"
+                        step="0.01"
+                        min="0"
+                        value={formData.targetAmount}
+                        onChange={handleInputChange}
+                        className="input-field pl-10"
+                        placeholder="0.00"
+                      />
                     </div>
+                    {errors.targetAmount && (
+                      <p className="mt-1 text-sm text-danger-600">{errors.targetAmount}</p>
+                    )}
                   </div>
 
                   {/* Current Amount */}
