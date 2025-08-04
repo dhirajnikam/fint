@@ -16,11 +16,13 @@ import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Settings = () => {
-  const { 
-    exportData, 
-    clearAllData, 
+  const {
+    exportData,
+    clearAllData,
     showNotification,
-    analytics 
+    transactions,
+    savings,
+    debts
   } = useData();
   const { user, logout } = useAuth();
   const [isExporting, setIsExporting] = useState(false);
@@ -69,9 +71,9 @@ const Settings = () => {
 
   const getDataStats = () => {
     return {
-      transactions: analytics.recentActivity.filter(item => item.type).length,
-      savings: analytics.recentActivity.filter(item => item.targetAmount).length,
-      debts: analytics.recentActivity.filter(item => item.interestRate !== undefined).length,
+      transactions: transactions.length,
+      savings: savings.length,
+      debts: debts.length,
       totalSize: '~2.5 MB' // Placeholder
     };
   };
