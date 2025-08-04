@@ -61,7 +61,7 @@ A comprehensive personal finance management application built with React, Fireba
 3. **Set up Firebase**
    - Create a Firebase project
    - Enable Authentication and Firestore
-   - Update `src/firebase/config.js` with your Firebase config
+   - Create a `.env` file in the project root and add your Firebase config values (see Environment Variables section)
 
 4. **Start the development server**
    ```bash
@@ -75,7 +75,7 @@ A comprehensive personal finance management application built with React, Fireba
 2. Create a new project
 3. Enable Authentication (Email/Password, Google)
 4. Enable Firestore Database
-5. Copy your config to `src/firebase/config.js`
+5. Add your config values to the `.env` file
 
 ### Environment Variables
 Create a `.env` file in the root directory:
