@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+  }
+  
+  /* Disable browser validation styling */
+  input:invalid,
+  textarea:invalid,
+  select:invalid {
+    box-shadow: none !important;
+    background-color: inherit !important;
+  }
+  
+  /* Prevent any browser auto-styling */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px inherit inset !important;
+    -webkit-text-fill-color: inherit !important;
+    background-color: inherit !important;
+  }
+  
+  /* Remove browser validation message */
+  input::-webkit-validation-bubble-message,
+  textarea::-webkit-validation-bubble-message,
+  select::-webkit-validation-bubble-message {
+    display: none;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-success {
+    @apply bg-success-600 hover:bg-success-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-danger {
+    @apply bg-danger-600 hover:bg-danger-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-gray-100 transition-colors duration-200;
+    background-color: inherit !important;
+  }
+  
+  /* Prevent any unwanted highlighting */
+  .input-field:not(:focus) {
+    background-color: inherit !important;
+    box-shadow: none !important;
+  }
+  
+  /* Override any browser-specific styling */
+  input[type="number"],
+  input[type="text"],
+  input[type="date"],
+  textarea,
+  select {
+    background-color: inherit !important;
+    box-shadow: none !important;
+  }
+  
+  /* Specific fix for number inputs that might get highlighted */
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  /* Remove any browser validation styling completely */
+  input:not([type="file"]):not([type="checkbox"]):not([type="radio"]) {
+    background-color: inherit !important;
+    box-shadow: none !important;
+  }
+  
+  /* Radio button styling */
+  input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  input[type="radio"]:checked {
+    border-color: #3b82f6;
+    background-color: #3b82f6;
+  }
+  
+  input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background-color: white;
+    border-radius: 50%;
+  }
+  
+  input[type="radio"]:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  /* Dark mode radio buttons */
+  .dark input[type="radio"] {
+    border-color: #4b5563;
+  }
+  
+  .dark input[type="radio"]:checked {
+    border-color: #60a5fa;
+    background-color: #60a5fa;
+  }
+  
+  /* Ensure consistent styling in all states */
+  .input-field:not(:focus):not(:hover) {
+    background-color: inherit !important;
+    box-shadow: none !important;
+  }
+  
+  /* Prevent any browser auto-styling */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px inherit inset !important;
+    -webkit-text-fill-color: inherit !important;
+    background-color: inherit !important;
+  }
+  
+  /* Custom validation styling */
+  .input-field.error {
+    @apply border-red-500 dark:border-red-400;
+  }
+  
+  .input-field.error:focus {
+    @apply ring-red-500 dark:ring-red-400;
+  }
+  
+  .loading-skeleton {
+    @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+  }
+} 
