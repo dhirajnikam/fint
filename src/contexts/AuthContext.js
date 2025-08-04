@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase/config';
 import toast from 'react-hot-toast';
+import mapError from '../utils/mapError';
 
 const AuthContext = createContext();
 
@@ -39,7 +40,8 @@ export const AuthProvider = ({ children }) => {
       toast.success('Successfully logged in!');
       return result;
     } catch (error) {
-      toast.error(error.message);
+      console.error(error);
+      toast.error(mapError(error));
       throw error;
     }
   };
@@ -50,7 +52,8 @@ export const AuthProvider = ({ children }) => {
       toast.success('Account created successfully!');
       return result;
     } catch (error) {
-      toast.error(error.message);
+      console.error(error);
+      toast.error(mapError(error));
       throw error;
     }
   };
@@ -61,7 +64,8 @@ export const AuthProvider = ({ children }) => {
       toast.success('Successfully logged in with Google!');
       return result;
     } catch (error) {
-      toast.error(error.message);
+      console.error(error);
+      toast.error(mapError(error));
       throw error;
     }
   };
@@ -71,7 +75,8 @@ export const AuthProvider = ({ children }) => {
       await signOut(auth);
       toast.success('Successfully logged out!');
     } catch (error) {
-      toast.error(error.message);
+      console.error(error);
+      toast.error(mapError(error));
       throw error;
     }
   };
@@ -81,7 +86,8 @@ export const AuthProvider = ({ children }) => {
       await sendPasswordResetEmail(auth, email);
       toast.success('Password reset email sent!');
     } catch (error) {
-      toast.error(error.message);
+      console.error(error);
+      toast.error(mapError(error));
       throw error;
     }
   };
