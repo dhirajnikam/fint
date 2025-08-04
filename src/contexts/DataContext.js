@@ -251,8 +251,9 @@ export const DataProvider = ({ children }) => {
     const currentYear = new Date().getFullYear();
 
     const monthlyTransactions = transactions.filter(t => {
-      const transactionDate = new Date(t.createdAt);
-      return transactionDate.getMonth() === currentMonth && 
+      const transactionDate = t.createdAt;
+      return transactionDate &&
+             transactionDate.getMonth() === currentMonth &&
              transactionDate.getFullYear() === currentYear;
     });
 
@@ -290,7 +291,7 @@ export const DataProvider = ({ children }) => {
 
     // Recent activity
     const recentActivity = [...transactions, ...savings, ...debts]
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
       .slice(0, 10);
 
     setAnalytics({
@@ -378,10 +379,14 @@ export const DataProvider = ({ children }) => {
     );
 
     const transactionsUnsubscribe = onSnapshot(transactionsQuery, (snapshot) => {
-      const transactionsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const transactionsData = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt ? data.createdAt.toDate() : null
+        };
+      });
       setTransactions(transactionsData);
     });
 
@@ -393,10 +398,14 @@ export const DataProvider = ({ children }) => {
     );
 
     const savingsUnsubscribe = onSnapshot(savingsQuery, (snapshot) => {
-      const savingsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const savingsData = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt ? data.createdAt.toDate() : null
+        };
+      });
       setSavings(savingsData);
     });
 
@@ -408,10 +417,14 @@ export const DataProvider = ({ children }) => {
     );
 
     const debtsUnsubscribe = onSnapshot(debtsQuery, (snapshot) => {
-      const debtsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const debtsData = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt ? data.createdAt.toDate() : null
+        };
+      });
       setDebts(debtsData);
     });
 

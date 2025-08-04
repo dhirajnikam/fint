@@ -96,8 +96,8 @@ const AIInsights = () => {
     // Monthly comparison
     const currentMonth = new Date().getMonth();
     const lastMonthTransactions = transactions.filter(t => {
-      const date = new Date(t.createdAt);
-      return date.getMonth() === currentMonth - 1;
+      const date = t.createdAt;
+      return date && date.getMonth() === currentMonth - 1;
     });
     
     const lastMonthExpenses = lastMonthTransactions
