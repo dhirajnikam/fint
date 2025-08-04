@@ -4,16 +4,13 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 const ExpenseChart = ({ transactions }) => {
   // Group transactions by month
   const monthlyData = transactions.reduce((acc, transaction) => {
-    const date = transaction.createdAt;
-    if (!date) return acc;
-    const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
 
-    if (!acc[monthKey]) {
-      acc[monthKey] = {
-        month: new Date(date.getFullYear(), date.getMonth(), 1),
-        income: 0,
-        expenses: 0
-      };
+    const date = transaction.createdAt?.toDate ? transaction.createdAt.toDate() : new Date(transaction.createdAt);
+    const monthYear = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    
+    if (!acc[monthYear]) {
+      acc[monthYear] = { month: monthYear, income: 0, expenses: 0 };
+
     }
 
     if (transaction.type === 'income') {

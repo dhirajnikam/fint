@@ -1,17 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  collection, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  doc, 
-  query, 
-  where, 
-  orderBy, 
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  orderBy,
   onSnapshot,
   getDocs,
   writeBatch,
-  serverTimestamp
+  serverTimestamp,
+  Timestamp
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useAuth } from './AuthContext';
@@ -71,10 +72,12 @@ export const DataProvider = ({ children }) => {
   // Enhanced transaction functions
   const addTransaction = async (transaction) => {
     try {
+      const { date, ...rest } = transaction;
+
       const transactionData = {
-        ...transaction,
+        ...rest,
         userId: user.uid,
-        createdAt: serverTimestamp(),
+        createdAt: Timestamp.fromDate(new Date(date)),
         updatedAt: serverTimestamp(),
         amount: parseFloat(transaction.amount),
         category: transaction.category || 'Other',
@@ -251,9 +254,10 @@ export const DataProvider = ({ children }) => {
     const currentYear = new Date().getFullYear();
 
     const monthlyTransactions = transactions.filter(t => {
-      const transactionDate = t.createdAt;
-      return transactionDate &&
-             transactionDate.getMonth() === currentMonth &&
+
+      const transactionDate = t.createdAt?.toDate ? t.createdAt.toDate() : new Date(t.createdAt);
+      return transactionDate.getMonth() === currentMonth &&
+
              transactionDate.getFullYear() === currentYear;
     });
 
@@ -290,8 +294,11 @@ export const DataProvider = ({ children }) => {
     const debtProgress = totalDebtAmount > 0 ? ((totalDebtAmount - totalDebtRemaining) / totalDebtAmount) * 100 : 0;
 
     // Recent activity
+    const getDate = (item) => item.createdAt?.toDate ? item.createdAt.toDate() : new Date(item.createdAt);
     const recentActivity = [...transactions, ...savings, ...debts]
-      .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+
+      .sort((a, b) => getDate(b) - getDate(a))
+
       .slice(0, 10);
 
     setAnalytics({
